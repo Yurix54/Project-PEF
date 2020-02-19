@@ -1,0 +1,154 @@
+// *frequency *time and *pulse values shouldbe changed after preliminary tests
+//time values must be reverted back to delayMicroseconds
+
+
+
+// Settings for PEF INITIALIZE CONTROL SYSTEM
+
+int switchstate ;
+int switchstart = 24; // SYSTEM ON/OFF BUTTON
+int switchled = 6;  // SYSTEM ON/OFF LED LIGHT
+int selection1 = 25; // Subject Food type 1
+int selection2 = 26; // Subject Food type 2
+int switch1 = HIGH; // Button State Food Type 1
+int switch2 = HIGH; // Button State Food Type 2
+int carrots = 11; // for carrots pinout
+int tomato = 12; // for tomato pinout
+
+// Settings for Pulse management
+double freq1 = 500; // set frequency in Hz for carrots (note that this value must be half of the frequency) default value should be 45.45 
+double freq2 = 500; // set frequency in Hz for tomatoes (note that this value must be half of the frequency)  default value should be 5.55
+
+
+// Display Settings
+
+#include <LiquidCrystal.h> //include library code
+LiquidCrystal lcd(43,42,40,39,38,2,1); //initialize the library with the numbers of the interface pins 
+
+
+
+void setup()
+{
+ // Pulse Section
+  pinMode(carrots, OUTPUT);
+  Pulse1(5, freq1); // 5 is number of blinks, freq1 is the milliseconds in each state 
+  pinMode(tomato, OUTPUT);
+  Pulse2(5, freq2); // 5 is number of blinks, freq2 is the milliseconds in each state 
+
+// Control Section
+  pinMode (switchstart, INPUT);  // SYSTEM ON/OFF BUTTON
+  pinMode (switchled, OUTPUT); // SYSTEM ON/OFF LED LIGHT
+
+// INPUT SETUP 
+  pinMode (selection1, INPUT);  // Setup Food Type 1
+  pinMode (selection2, INPUT);  // Setup Food Type 2
+
+// OUTPUT SETUP
+  pinMode (carrots, OUTPUT); // Setup Food Type 1
+  pinMode (tomato, OUTPUT); // Setup Food Type 2
+  
+  lcd.begin(16,2); // Set up LCD's number of columns and rows
+  lcd.print("PLease select treatment options"); //Print Message to the LCD
+}
+
+void loop()
+{
+{
+  switchstate = digitalRead (switchstart);
+  if (switchstate = HIGH) // If Button is Pressed
+    {
+    systemstarts();
+    }
+  else; // if the Button is not Pressed
+  {
+    digitalWrite (switchled, LOW); 
+    digitalWrite (carrots, LOW); 
+    digitalWrite (tomato, LOW);
+
+    
+  }
+   
+}
+{
+// set the cursor to column 0, line 1
+// note that line 1 is the second row, since counting begins with 0):
+lcd.setCursor(0,1);
+// print the number of seconds since reset:
+lcd.print(millis()/1000);
+}
+
+
+}
+
+// Pulse Management Section
+
+void Pulse1 (int repeats, int time)
+{
+  for (int i = 0; i < repeats; i++)
+  {
+    digitalWrite(carrots, HIGH);
+    delay(time); // THESE delay PARAMETERS MUST BE CHANGED PRIOR TO PRESENTING THE CODE 
+    digitalWrite(carrots, LOW);
+    delay(time); // THESE delay PARAMETERS MUST BE CHANGED PRIOR TO PRESENTING THE CODE 
+  }
+}
+
+void Pulse2 (int repeats, int time)
+{
+  for (int i = 0; i < repeats; i++)
+  {
+    digitalWrite(tomato, HIGH);
+    delay(time); // THESE delay PARAMETERS MUST BE CHANGED PRIOR TO PRESENTING THE CODE 
+    digitalWrite(tomato, LOW);
+    delay(time); // THESE delay PARAMETERS MUST BE CHANGED PRIOR TO PRESENTING THE CODE 
+  }
+}
+
+// Control Management Section
+
+void systemstarts()
+{
+   switch1 = digitalRead(selection1);
+   if(switch1=HIGH)
+      { 
+       FOODTYPE1 ();
+	displayswitch1();
+      }
+      // IF BUTTON 1 IS PRESSED
+      // CALL FOR FUNCTION FOODTYPE1     
+  switch2 = digitalRead(selection2);
+  if(switch2=HIGH)
+      { 
+       FOODTYPE2 ();
+     displayswitch2();
+      }
+      // IF BUTTON 2 IS PRESSED
+      // CALL FOR FUNCTION FOODTYPE2 
+}
+
+void FOODTYPE1() // WHEN BUTTON 1 IS PRESSED
+{
+    digitalWrite (carrots,HIGH);
+    digitalWrite (switchled,HIGH); 
+    digitalWrite (tomato, LOW);
+}
+
+void FOODTYPE2() // WHEN BUTTON 2 IS PRESSED
+{
+    digitalWrite (tomato,HIGH);
+    digitalWrite (switchled,HIGH); 
+    digitalWrite (carrots, LOW);     
+}
+
+void displayswitch1() //Display if button 1 is pressed
+
+{
+lcd.print("Processing Carrots please wait.....");
+}
+
+void displayswitch2() //Display if button 2 is pressed
+
+{
+lcd.print("Processing Tomatoes please wait.....");
+}
+
